@@ -109,26 +109,19 @@ module.exports = function(opts) {
   var handleIncomingRequest = function(request, implicitBatchId, implicitResponseId) {
     var errorResponse;
 
-    if(!isObject(request)) {
-      errorResponse = new Response(null, new JsonRpcError.InvalidRequest());
-      pushOutgoingResponse(errorResponse, implicitBatchId, implicitResponseId);
-      return;
+    if (isExpectingResponse(request)) {
+      if (!isObject(request)) {
+        errorResponse = new Response(null, new JsonRpcError.InvalidRequest());
+      } else if (!hasValidVersion(request)) {
+        errorResponse = new Response(request.id, new JsonRpcError.InvalidRequest());
+      } else if (!hasValidRequestMethod(request)) {
+        errorResponse = new Response(request.id, new JsonRpcError.InvalidRequest());
+      } else if (!hasListenerForRequestMethod(request)) {
+        errorResponse = new Response(request.id, new JsonRpcError.MethodNotFound());
+      }
     }
 
-    if (hasValidRequestId(request) && !hasValidVersion(request)) {
-      errorResponse = new Response(request.id, new JsonRpcError.InvalidRequest());
-      pushOutgoingResponse(errorResponse, implicitBatchId, implicitResponseId);
-      return;
-    }
-
-    if (hasValidRequestId(request) && !hasValidRequestMethod(request)) {
-      errorResponse = new Response(request.id, new JsonRpcError.InvalidRequest());
-      pushOutgoingResponse(errorResponse, implicitBatchId, implicitResponseId);
-      return;
-    }
-
-    if (hasValidRequestId(request) && !hasListenerForRequestMethod(request)) {
-      errorResponse = new Response(request.id, new JsonRpcError.MethodNotFound());
+    if (errorResponse) {
       pushOutgoingResponse(errorResponse, implicitBatchId, implicitResponseId);
       return;
     }
