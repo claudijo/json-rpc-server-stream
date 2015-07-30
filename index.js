@@ -98,8 +98,8 @@ module.exports = function(opts) {
         responseBatchBuffer[implicitBatchId][implicitResponseId] = null;
       }
 
-      // We need to iterate whole batch and populate expectedResponses before
-      // starting to handle each incoming request.
+      // We need to iterate whole batch and populate response batch buffer
+      // before starting to handle each incoming request.
       process.nextTick(function() {
         handleIncomingRequest(request, expectingResponse ? implicitBatchId : null, implicitResponseId);
       });
