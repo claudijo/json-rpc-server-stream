@@ -1,0 +1,40 @@
+{
+  "name": "json-rpc-server-stream",
+  "version": "0.0.1",
+  "description": "JSON RPC 2.0 server implementation with streaming I/O and event driven API for endpoint implementors.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha --check-leaks --reporter spec --bail --watch",
+    "test-cov": "./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- --reporter dot --check-leaks test/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/claudijo/json-rpc-server-stream.git"
+  },
+  "keywords": [
+    "json",
+    "rpc",
+    "server",
+    "stream"
+  ],
+  "author": "Claudijo Borovic <hello@claudijo.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/claudijo/json-rpc-server-stream/issues"
+  },
+  "homepage": "https://github.com/claudijo/json-rpc-server-stream#readme",
+  "dependencies": {
+    "dead-simple-incrementer": "^1.0.0",
+    "isobject": "^2.0.0",
+    "json-rpc-error": "^2.0.0",
+    "json-rpc-response": "^1.0.3"
+  },
+  "devDependencies": {
+    "expect.js": "^0.3.1",
+    "istanbul": "^0.3.17",
+    "mocha": "^2.2.5"
+  }
+}
