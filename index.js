@@ -57,6 +57,14 @@ module.exports = function(opts) {
     }
 
     return function(err, result) {
+      // Strings, native errors or other non-JSON RPC 2.0 errors are transformed
+      // into JSON RPC 2.0 error of type Internal Error.
+      if (typeof err === 'string') {
+        err = new JsonRpcError.InternalError({ message: err });
+      } else if (err && (!err.code || !err.message)) {
+        err = new JsonRpcError.InternalError(err);
+      }
+
       var response = new Response(request.id, err, result);
       pushOutgoingResponse(response);
     };

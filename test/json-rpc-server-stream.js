@@ -104,6 +104,69 @@ describe('JSON RPC 2.0 server stream', function() {
       duplex.push('{"jsonrpc":"2.0","method":"add","params":[1,2],"id":1}');
     });
 
+    it('should send internal error with passed on error message if invoking error callback with native error', function(done) {
+      jsonRpcServer.emitter.on('add', function(params, fn) {
+        fn(new Error('some internal error'));
+      });
+
+      duplex._write = function(chunk, encoding, callback) {
+        expect(JSON.parse(chunk)).to.eql({
+          jsonrpc: '2.0',
+          error: {
+            code: -32603,
+            message: 'some internal error'
+          },
+          id: 1
+        });
+
+        done();
+      };
+
+      duplex.push('{"jsonrpc":"2.0","method":"add","params":[1,2],"id":1}');
+    });
+
+    it('should send internal error with error as message if invoking error callback with string', function(done) {
+      jsonRpcServer.emitter.on('add', function(params, fn) {
+        fn('some error message');
+      });
+
+      duplex._write = function(chunk, encoding, callback) {
+        expect(JSON.parse(chunk)).to.eql({
+          jsonrpc: '2.0',
+          error: {
+            code: -32603,
+            message: 'some error message'
+          },
+          id: 1
+        });
+
+        done();
+      };
+
+      duplex.push('{"jsonrpc":"2.0","method":"add","params":[1,2],"id":1}');
+    });
+
+    it('should send error if invoking error callback with valid JSON RPC error', function(done) {
+      jsonRpcServer.emitter.on('add', function(params, fn) {
+        fn({ code: -1, message: 'meltdown'});
+      });
+
+      duplex._write = function(chunk, encoding, callback) {
+        expect(JSON.parse(chunk)).to.eql({
+          jsonrpc: '2.0',
+          error: {
+            code: -1,
+            message: 'meltdown'
+          },
+          id: 1
+        });
+
+        done();
+      };
+
+      duplex.push('{"jsonrpc":"2.0","method":"add","params":[1,2],"id":1}');
+    });
+
     it('should send parse error if request is invalid JSON', function(done) {
       duplex._write = function(chunk, encoding, callback) {
         expect(JSON.parse(chunk)).to.eql({
