@@ -27,7 +27,7 @@ describe('JSON RPC 2.0 server stream', function() {
     });
 
     it('should emit notification without params', function(done) {
-      jsonRpcServer.emitter.on('update', function() {
+      jsonRpcServer.rpc.on('update', function() {
         done();
       });
 
@@ -35,7 +35,7 @@ describe('JSON RPC 2.0 server stream', function() {
     });
 
     it('should emit notification without params when sending notification with invalid JSON and then sending valid notification', function(done) {
-      jsonRpcServer.emitter.on('update', function() {
+      jsonRpcServer.rpc.on('update', function() {
         done();
       });
 
@@ -44,7 +44,7 @@ describe('JSON RPC 2.0 server stream', function() {
     });
 
     it('should emit received notification with params', function(done) {
-      jsonRpcServer.emitter.on('update', function(params) {
+      jsonRpcServer.rpc.on('update', function(params) {
         expect(params).to.eql([1, 2]);
         done();
       });
@@ -55,12 +55,12 @@ describe('JSON RPC 2.0 server stream', function() {
       var fooCalled = false;
       var barCalled = false;
 
-      jsonRpcServer.emitter.on('foo', function() {
+      jsonRpcServer.rpc.on('foo', function() {
         fooCalled = true;
         if (fooCalled && barCalled) done();
       });
 
-      jsonRpcServer.emitter.on('bar', function() {
+      jsonRpcServer.rpc.on('bar', function() {
         barCalled = true;
         if (fooCalled && barCalled) done();
       });
@@ -72,12 +72,12 @@ describe('JSON RPC 2.0 server stream', function() {
       var fooCalled = false;
       var barCalled = false;
 
-      jsonRpcServer.emitter.on('foo', function() {
+      jsonRpcServer.rpc.on('foo', function() {
         fooCalled = true;
         if (fooCalled && barCalled) done();
       });
 
-      jsonRpcServer.emitter.on('bar', function() {
+      jsonRpcServer.rpc.on('bar', function() {
         barCalled = true;
         if (fooCalled && barCalled) done();
       });
@@ -87,7 +87,7 @@ describe('JSON RPC 2.0 server stream', function() {
     });
 
     it('should send response with handled request', function(done) {
-      jsonRpcServer.emitter.on('add', function(params, fn) {
+      jsonRpcServer.rpc.on('add', function(params, fn) {
         fn(null, params[0] + params[1]);
       });
 
@@ -105,7 +105,7 @@ describe('JSON RPC 2.0 server stream', function() {
     });
 
     it('should send internal error with passed on error message if invoking error callback with native error', function(done) {
-      jsonRpcServer.emitter.on('add', function(params, fn) {
+      jsonRpcServer.rpc.on('add', function(params, fn) {
         fn(new Error('some internal error'));
       });
 
@@ -126,7 +126,7 @@ describe('JSON RPC 2.0 server stream', function() {
     });
 
     it('should send internal error with error as message if invoking error callback with string', function(done) {
-      jsonRpcServer.emitter.on('add', function(params, fn) {
+      jsonRpcServer.rpc.on('add', function(params, fn) {
         fn('some error message');
       });
 
@@ -147,7 +147,7 @@ describe('JSON RPC 2.0 server stream', function() {
     });
 
     it('should send error if invoking error callback with valid JSON RPC error', function(done) {
-      jsonRpcServer.emitter.on('add', function(params, fn) {
+      jsonRpcServer.rpc.on('add', function(params, fn) {
         fn({ code: -1, message: 'meltdown'});
       });
 
@@ -221,7 +221,7 @@ describe('JSON RPC 2.0 server stream', function() {
 
       duplex._write = function(chunk, encoding, callback) {};
 
-      jsonRpcServer.emitter.on('update', function() {
+      jsonRpcServer.rpc.on('update', function() {
         callCount += 1;
       });
 
@@ -238,7 +238,7 @@ describe('JSON RPC 2.0 server stream', function() {
 
       duplex._write = function(chunk, encoding, callback) {};
 
-      jsonRpcServer.emitter.on('update', function() {
+      jsonRpcServer.rpc.on('update', function() {
         callCount += 1;
       });
 
@@ -365,11 +365,11 @@ describe('JSON RPC 2.0 server stream', function() {
     });
 
     it('should send responses in batch if receiving requests in batch', function() {
-      jsonRpcServer.emitter.on('add', function(params, fn) {
+      jsonRpcServer.rpc.on('add', function(params, fn) {
         fn(null, params[0] + params[1]);
       });
 
-      jsonRpcServer.emitter.on('subtract', function(params, fn) {
+      jsonRpcServer.rpc.on('subtract', function(params, fn) {
         fn(null, params[0] - params[1]);
       });
 
@@ -416,7 +416,7 @@ describe('JSON RPC 2.0 server stream', function() {
     it('should emit event if request has invalid version', function(done) {
       duplex._write = function(chunk, encoding, callback) {};
 
-      jsonRpcServer.emitter.on('update', function() {
+      jsonRpcServer.rpc.on('update', function() {
         done();
       });
 
@@ -426,7 +426,7 @@ describe('JSON RPC 2.0 server stream', function() {
     it('should emit event if notification has invalid version', function(done) {
       duplex._write = function(chunk, encoding, callback) {};
 
-      jsonRpcServer.emitter.on('update', function() {
+      jsonRpcServer.rpc.on('update', function() {
         done();
       });
 
@@ -434,7 +434,7 @@ describe('JSON RPC 2.0 server stream', function() {
     });
 
     it('should send response with handled request if request has invalid version', function(done) {
-      jsonRpcServer.emitter.on('add', function(params, fn) {
+      jsonRpcServer.rpc.on('add', function(params, fn) {
         fn(null, params[0] + params[1]);
       });
 

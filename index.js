@@ -22,7 +22,7 @@ module.exports = function(opts) {
   };
 
   var hasListenerForRequestMethod = function(request) {
-    return !!stream.emitter.listeners(request.method).length;
+    return !!stream.rpc.listeners(request.method).length;
   };
 
   var isExpectingResponse = function(request) {
@@ -138,10 +138,10 @@ module.exports = function(opts) {
       return;
     }
 
-    stream.emitter.emit(request.method, request.params, createReplyCallback(request));
+    stream.rpc.emit(request.method, request.params, createReplyCallback(request));
   };
 
-  stream.emitter = new EventEmitter();
+  stream.rpc = new EventEmitter();
 
   stream._write = function(chunk, encoding, callback) {
     var data;
