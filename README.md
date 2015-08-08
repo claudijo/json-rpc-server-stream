@@ -41,7 +41,7 @@ Create a streaming JSON RPC server and add event listeners for incoming
 requests (and notifications).
 
 As mentioned above, it is also recommended to pipe the streaming JSON RPC 2.0
-server through a mux/demux before piping it to a channel stream, if using both a
+server through a mux/demux before piping it to a channel stream if using both a
 client and a server on the same endpoint that share a bi-directional channel.
 
 ### jsonRpcServerStream()
