@@ -62,7 +62,7 @@ notification (which should not be replied to) the reply callback is a noop.
 The following examples shows the basic use cases for a JSON RPC 2.0 Server.
 
 ```js
-var jsonRpcServerStream = require('json-rpc-server-stream');
+var jsonRpcServerStream = require('json-rpc-server-stream')();
 
 // A request
 jsonRpcServerStream.rpc.on('divide', function(params, reply) {
@@ -78,16 +78,18 @@ jsonRpcServerStream.rpc.on('logToConsole', function(params) {
   console.log(params);
 });
 
-getSomeReadableStreamSomehow().pipe(jsonRpcServerStream).pipe(getWritableStreamSomehow());
+getSomeReadableStreamSomehow()
+  .pipe(jsonRpcServerStream)
+  .pipe(getWritableStreamSomehow());
 ```
 
 ## Advanced Example
 
-The following example show how to implement a JSON RPC 2.0 client and server
-in the browser where WebSockets are used as a shared bi-directional channel,
-with multiplexed and demultiplexed transmission. Additional modules
-[json-rpc-client-stream](https://github.com/claudijo/json-rpc-client-stream),
+The following example shows how to implement a JSON RPC 2.0 client and server
+in in node.js where websockets are used as a shared bi-directional channel, with
+multiplexed and demultiplexed transmission. Additional modules
 [ws](https://github.com/websockets/ws),
+[json-rpc-client-stream](https://github.com/claudijo/json-rpc-client-stream),
 [websocket-connection-stream](https://github.com/claudijo/websocket-connection-stream),
 and [mux-demux-stream](https://github.com/claudijo/mux-demux-stream) are used.
 
@@ -109,9 +111,8 @@ wss.on('connection', function connection(ws) {
   // Demultiplex incoming server requests and incoming client responses
   demux(websocketConnectionStream, [jsonRpcServerStream, jsonRpcClientStream]);
 
-
   jsonRpcServerStream.rpc.on('join', function(params, reply) {
-    if (checkIfUserIsAllowedToJoinRoomSomehow()) {
+    if (checkIfUserIsAllowedToJoinRoomSomehow(params.roomId, jsonRpcClientStream)) {
       placeJsonRpcClientStreamInARoomCollectionSomehow(params.roomId, jsonRpcClientStream);
       return reply(null, 'OK';
     }
@@ -123,7 +124,10 @@ wss.on('connection', function connection(ws) {
     var jsonRpcClientStreams = getAllJsonRpcClientInstancesForRoomSomehow(params.to);
 
     jsonRpcClientStreams.forEach(function(jsonRpcClientStream) {
-      jsonRpcClientStream.rpc.emit('chat', { from: params.from, message: params.message });
+      jsonRpcClientStream.rpc.emit('chat', {
+        from: params.from,
+        message: params.message
+      });
     });
   });
 
