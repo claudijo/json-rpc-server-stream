@@ -4,12 +4,14 @@ JSON 2.0 RPC Server implementation with streaming I/O and event driven API for
 endpoint implementers. For the corresponding client implementation see
 [json-rpc-client-stream](https://github.com/claudijo/json-rpc-client-stream)
 
+## JSON RPC 2.0 Architecture
+
 The [JSON RPC 2.0 protocol](http://www.jsonrpc.org/specification) uses a
 client-server-architecture, in contrast to the peer-to-peer oriented 1.0
 version, where peers act as both clients and server. However, it is still
 possible to use JSON RPC 2.0 in a peer-to-peer fashion.
 
-## Using JSON RPC 2.0 in a Peer-to-peer Fashion
+### Using JSON RPC 2.0 in a Peer-to-peer Fashion
 
 A server and client pair must be installed on each node in order to use JSON RPC
 2.0 in a peer-to-peer fashion. Additionally, the communication channel between
