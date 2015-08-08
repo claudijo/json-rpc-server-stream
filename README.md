@@ -2,7 +2,7 @@
 
 JSON 2.0 RPC Server implementation with streaming I/O and event driven API for
 endpoint implementers. For the corresponding client implementation see
-[json-rpc-client-stream](https://github.com/claudijo/json-rpc-client-stream)
+[json-rpc-client-stream](https://github.com/claudijo/json-rpc-client-stream).
 
 ## JSON RPC 2.0 Architecture
 
