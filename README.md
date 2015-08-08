@@ -21,12 +21,12 @@ The problem with such a setup is to distinguish between incoming requests from
 incoming responses.
 
 This problem could be handled by the protocol implementation, since it is quite
-straight forward to distinguish well-formed requests from responses.
-Consequently, messages could be inspected by the implementation and either be
-handled as requests or as responses. However, such an approach is not optimal –
-It violates the idea of _separation of concerns_. Furthermore, there are
-malformed JSON RPC 2.0 messages, such as an empty array `"[]"`, that cannot be
-distinguished as a malformed request that requires an error response or a
+straight forward to tell the difference between well-formed requests from
+responses. Consequently, messages could be inspected by the implementation and
+either be handled as requests or as responses. However, such an approach is not
+optimal – It violates the idea of _separation of concerns_. Furthermore, there
+are malformed JSON RPC 2.0 messages, such as an empty array `"[]"`, that cannot
+be distinguished as a malformed request that requires an error response or a
 malformed response that should be left unanswered.
 
 A better approach when a JSON RPC 2.0 server and client on the same node share a
