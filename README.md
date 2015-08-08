@@ -54,7 +54,7 @@ instance, which is a [duplex stream](https://nodejs.org/api/stream.html#stream_c
 Add listener for an RPC method. The listener takes a `parameter` argument and a
 `reply` argument. The reply argument is a callback that should be invoked with
 an error and a result if the rpc was a request. If the reply callback is
-provided with an error, the result argument must be left undefined. If the rpc
+provided with an error, the result argument must be left undefined. If the RPC
 was a notification (which should not be replied to) the reply callback is a
 noop.
 
