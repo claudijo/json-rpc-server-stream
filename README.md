@@ -52,7 +52,7 @@ instance, which is a [duplex stream](https://nodejs.org/api/stream.html#stream_c
 ### jsonRpcServerStreamInstance.rpc.on(event, listener)
 
 Add listener for an rpc method. The listener takes a `parameter` argument and a
-`reply` callback argument. The reply argument is a callback that should be called with an
+`reply` argument. The reply argument is a callback that should be called with an
 error and a result if the rpc was a request. If the reply callback is provided
 with an error, the result argument must be left undefined. If the rpc was a
 notification (which should not be replied to) the reply callback is a noop.
