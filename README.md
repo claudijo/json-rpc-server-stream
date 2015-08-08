@@ -17,8 +17,8 @@ A server and client pair must be installed on each node in order to use JSON RPC
 2.0 in a peer-to-peer fashion. Additionally, the communication channel between
 nodes must be bi-directional, for instance using
 [WebSockets](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API).
-The problem with such a setup is to distinguish between incoming requests from
-incoming responses.
+The problem with such a setup is to separate incoming requests from incoming
+responses.
 
 This problem could be handled by the protocol implementation, since it is quite
 straight forward to tell the difference between well-formed requests from
