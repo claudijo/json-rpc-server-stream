@@ -137,8 +137,8 @@ wss.on('connection', function connection(ws) {
 
 ## Related packages
 
+* [ws](https://github.com/websockets/ws)
 * [json-rpc-client-stream](https://github.com/claudijo/json-rpc-client-stream)
-* [ws](https://github.com/websockets/ws),
 * [websocket-connection-stream](https://github.com/claudijo/websocket-connection-stream)
 * [mux-demux-stream](https://github.com/claudijo/mux-demux-stream)
 
