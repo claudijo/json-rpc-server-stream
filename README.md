@@ -17,7 +17,7 @@ A server and client pair must be installed on each node in order to use JSON RPC
 2.0 in a peer-to-peer fashion. Additionally, full-duplex communication between
 node endpoint is required, for instance using
 [WebSockets](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API).
-The question then is, how to separate incoming requests from incoming
+The question then becomes: How to separate incoming requests from incoming
 responses?
 
 This problem could be handled by the protocol implementation, since it is quite
