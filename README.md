@@ -46,6 +46,9 @@ npm install json-rpc-server-stream
 Create a streaming JSON RPC server and add event listeners for incoming
 requests (and notifications).
 
+Do some stream plumbing, such as: Readable connection stream -> RPC server ->
+Writable connection stream.
+
 As mentioned above, it is also recommended to pipe the streaming JSON RPC 2.0
 server and client through a mux/demux before piping it to a channel stream if
 using JSON RPC 2.0 in a peer-to-peer fashion.
@@ -82,7 +85,7 @@ jsonRpcServerStream.rpc.on('divide', function(params, reply) {
 });
 
 // A notification
-jsonRpcServerStream.rpc.on('logToConsole', function(params) {
+jsonRpcServerStream.rpc.on('log', function(params) {
   console.log(params);
 });
 
@@ -102,7 +105,6 @@ multiplexed and demultiplexed transmission. Additional modules
 and [mux-demux-stream](https://github.com/claudijo/mux-demux-stream) are used.
 
 ```js
-
 var WebSocketServer = require('ws').Server;
 var wss = new WebSocketServer({ port: 8080 });
 var mux = require('mux-demux-stream').mux;
@@ -138,7 +140,6 @@ wss.on('connection', function connection(ws) {
       });
     });
   });
-
 });
 
 ```
