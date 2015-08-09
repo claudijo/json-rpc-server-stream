@@ -31,9 +31,10 @@ malformed response that should be left unanswered.
 
 A better approach when a JSON RPC 2.0 server and client on the same node share a
 common bidirectional channel is to multiplex and demultiplex (mux/demux) the
-transmission, so each message only hits the intended endpoint implementation.
-The module [mux-demux-stream](https://github.com/claudijo/mux-demux-stream) can
-be used to achieve this.
+transmission, so that each message only hits the intended endpoint
+implementation. The module
+[mux-demux-stream](https://github.com/claudijo/mux-demux-stream) can be used to
+achieve this.
 
 ## Installation
 
