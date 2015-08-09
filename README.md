@@ -14,8 +14,8 @@ possible to use JSON RPC 2.0 in a peer-to-peer fashion.
 ### Using JSON RPC 2.0 in a Peer-to-peer Fashion
 
 A server and client pair must be installed on each node in order to use JSON RPC
-2.0 in a peer-to-peer fashion. Additionally, full-duplex communication between
-node endpoint is required if, for instance using
+2.0 in a peer-to-peer fashion. Additionally, a full-duplex communication between
+node endpoint is required, for instance using
 [WebSockets](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API).
 The problem with such a setup is to separate incoming requests from incoming
 responses.
