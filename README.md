@@ -42,7 +42,7 @@ requests (and notifications).
 
 As mentioned above, it is also recommended to pipe the streaming JSON RPC 2.0
 server and client through a mux/demux before piping it to a channel stream if
-JSON RPC 2.0 in a peer-to-peer fashion.
+using JSON RPC 2.0 in a peer-to-peer fashion.
 
 ### jsonRpcServerStream()
 
@@ -88,7 +88,7 @@ getSomeReadableStreamSomehow()
 ## Advanced Example
 
 The following example shows how to implement a JSON RPC 2.0 client and server
-in in node.js where websockets are used as a shared bi-directional channel, with
+in node.js where websockets are used as a shared bi-directional channel, with
 multiplexed and demultiplexed transmission. Additional modules
 [ws](https://github.com/websockets/ws),
 [json-rpc-client-stream](https://github.com/claudijo/json-rpc-client-stream),
