@@ -14,11 +14,11 @@ possible to use JSON RPC 2.0 in a peer-to-peer fashion.
 ### Using JSON RPC 2.0 in a Peer-to-peer Fashion
 
 A server and client pair must be installed on each node in order to use JSON RPC
-2.0 in a peer-to-peer fashion. Additionally, a full-duplex communication between
+2.0 in a peer-to-peer fashion. Additionally, full-duplex communication between
 node endpoint is required, for instance using
 [WebSockets](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API).
-The problem with such a setup is to separate incoming requests from incoming
-responses.
+The question then is, how to separate incoming requests from incoming
+responses?
 
 This problem could be handled by the protocol implementation, since it is quite
 straight forward to separate well-formed requests from well-formed responses.
@@ -43,15 +43,15 @@ npm install json-rpc-server-stream
 
 ## Usage
 
-Create a streaming JSON RPC server and add event listeners for incoming
-requests (and notifications).
+Create a JSON RPC server stream and add event listeners for incoming
+requests or notifications.
 
 Do some stream plumbing, such as: Readable connection stream -> RPC server ->
 Writable connection stream.
 
-As mentioned above, it is also recommended to pipe the streaming JSON RPC 2.0
-server and client through a mux/demux before piping it to a channel stream if
-using JSON RPC 2.0 in a peer-to-peer fashion.
+As mentioned above, it is recommended to pipe the streaming JSON RPC 2.0 server
+and client through a mux/demux before piping it to a channel stream if using
+JSON RPC 2.0 in a peer-to-peer fashion.
 
 ### jsonRpcServerStream()
 
