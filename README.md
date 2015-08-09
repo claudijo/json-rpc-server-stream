@@ -35,6 +35,12 @@ transmission, so each message only hits the intended endpoint implementation.
 The module [mux-demux-stream](https://github.com/claudijo/mux-demux-stream) can
 be used to achieve this.
 
+## Installation
+
+```js
+npm install json-rpc-server-stream
+```
+
 ## Usage
 
 Create a streaming JSON RPC server and add event listeners for incoming
