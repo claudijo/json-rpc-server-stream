@@ -64,7 +64,7 @@ instance, which is a
 
 Add listener for an RPC method. The listener takes a `parameter` argument and a
 `reply` argument. The reply argument is a callback that should be invoked with
-an error and a result if the rpc was a request. If the reply callback is
+an error and a result if the RPC was a request. If the reply callback is
 provided with an error, the result argument must be left undefined. If the RPC
 was a notification (which should not be replied to) the reply callback is a
 noop.
@@ -108,19 +108,16 @@ and [mux-demux-stream](https://github.com/claudijo/mux-demux-stream) are used.
 ```js
 var WebSocketServer = require('ws').Server;
 var wss = new WebSocketServer({ port: 8080 });
-var mux = require('mux-demux-stream').mux;
-var demux = require('mux-demux-stream').demux;
+var mux = require('mux-demux-stream');
 
 wss.on('connection', function connection(ws) {
   var websocketConnectionStream = require('websocket-connection-stream')().attach(ws);
   var jsonRpcServerStream = require('json-rpc-server-stream')();
   var jsonRpcClientStream = require('json-rpc-client-stream')();
 
-  // Multiplex outgoing client requests and outgoing server responses.
-  mux([jsonRpcServerStream, jsonRpcClientStream], websocketConnectionStream);
-
-  // Demultiplex incoming server requests and incoming client responses
-  demux(websocketConnectionStream, [jsonRpcServerStream, jsonRpcClientStream]);
+  mux(jsonRpcServerStream, jsonRpcClientStream)
+    .pipe(websocketConnectionStream)
+    .demux(jsonRpcServerStream, jsonRpcClientStream);
 
   jsonRpcServerStream.rpc.on('join', function(params, reply) {
     if (checkIfUserIsAllowedToJoinRoomSomehow(params.roomId, jsonRpcClientStream)) {
