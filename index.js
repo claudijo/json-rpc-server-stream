@@ -35,7 +35,7 @@ module.exports = function(opts) {
 
   // Returns array with complete batch response or null if not all expected
   // responses are ready.
-  var getReadyBatchResponse = function(implicitBatchId) {
+  var getFullBatchResponse = function(implicitBatchId) {
     var implicitResponseId, response;
     var batch = [];
 
@@ -51,7 +51,7 @@ module.exports = function(opts) {
     return batch;
   };
 
-  var createReplyCallback = function(request) {
+  var createReplyCallback = function(request, implicitBatchId, implicitResponseId) {
     if (!hasValidRequestId(request)) {
       return function noop() {};
     }
@@ -66,7 +66,7 @@ module.exports = function(opts) {
       }
 
       var response = new Response(request.id, err, result);
-      pushOutgoingResponse(response);
+      pushOutgoingResponse(response, implicitBatchId, implicitResponseId);
     };
   };
 
@@ -75,15 +75,15 @@ module.exports = function(opts) {
 
     if (implicitBatchId) {
       responseBatchBuffer[implicitBatchId][implicitResponseId] = data;
-      batch = getReadyBatchResponse(implicitBatchId);
+      batch = getFullBatchResponse(implicitBatchId);
 
       if (batch) {
-        stream.push(JSON.stringify(batch));
+        stream.push(JSON.stringify(batch) + '\n');
       }
 
       return;
     }
-    stream.push(JSON.stringify(data));
+    stream.push(JSON.stringify(data) + '\n');
   };
 
   var handleIncomingBatch = function(batch) {
@@ -138,25 +138,28 @@ module.exports = function(opts) {
       return;
     }
 
-    stream.rpc.emit(request.method, request.params, createReplyCallback(request));
+    stream.rpc.emit(request.method, request.params, createReplyCallback(request, implicitBatchId, implicitResponseId));
   };
 
   stream.rpc = new EventEmitter();
 
   stream._write = function(chunk, encoding, callback) {
+    var chunkParts = chunk.toString().split('\n');
     var data;
 
-    try {
-      data = JSON.parse(chunk);
-    } catch (err) {
-      pushOutgoingResponse(new Response(null, new JsonRpcError.ParseError()));
-      return callback();
-    }
+    for (var i = 0; i < chunkParts.length; i++) {
+      try {
+        data = JSON.parse(chunkParts[i]);
+      } catch (err) {
+        pushOutgoingResponse(new Response(null, new JsonRpcError.ParseError()));
+        return callback();
+      }
 
-    if (Array.isArray(data)) {
-      handleIncomingBatch(data);
-    } else {
-      handleIncomingRequest(data);
+      if (Array.isArray(data)) {
+        handleIncomingBatch(data);
+      } else {
+        handleIncomingRequest(data);
+      }
     }
 
     callback();

@@ -86,6 +86,23 @@ describe('JSON RPC 2.0 server stream', function() {
       duplex.push('{"jsonrpc":"2.0","method":"bar"}');
     });
 
+    it('should emit several notification received as line separated json', function(done) {
+      var fooCalled = false;
+      var barCalled = false;
+
+      jsonRpcServer.rpc.on('foo', function() {
+        fooCalled = true;
+        if (fooCalled && barCalled) done();
+      });
+
+      jsonRpcServer.rpc.on('bar', function() {
+        barCalled = true;
+        if (fooCalled && barCalled) done();
+      });
+
+      duplex.push('{"jsonrpc":"2.0","method":"foo"}\n{"jsonrpc":"2.0","method":"bar"}\n');
+    });
+
     it('should send response with handled request', function(done) {
       jsonRpcServer.rpc.on('add', function(params, fn) {
         fn(null, params[0] + params[1]);
@@ -98,6 +115,19 @@ describe('JSON RPC 2.0 server stream', function() {
           id: 1
         });
 
+        done();
+      };
+
+      duplex.push('{"jsonrpc":"2.0","method":"add","params":[1,2],"id":1}');
+    });
+
+    it('should send response with handled request including new line character as delimiter', function(done) {
+      jsonRpcServer.rpc.on('add', function(params, fn) {
+        fn(null, params[0] + params[1]);
+      });
+
+      duplex._write = function(chunk, encoding, callback) {
+        expect(chunk.toString()).to.eql('{"result":3,"jsonrpc":"2.0","id":1}\n');
         done();
       };
 
@@ -364,7 +394,7 @@ describe('JSON RPC 2.0 server stream', function() {
       duplex.push('[{"jsonrpc":"2.0","method":"foo","id":1},{"jsonrpc":"2.0","method":1,"id":2},1]');
     });
 
-    it('should send responses in batch if receiving requests in batch', function() {
+    it('should send responses in batch if receiving requests in batch', function(done) {
       jsonRpcServer.rpc.on('add', function(params, fn) {
         fn(null, params[0] + params[1]);
       });
@@ -391,6 +421,181 @@ describe('JSON RPC 2.0 server stream', function() {
           id: 3
         }]);
 
+        done();
+      };
+
+      duplex.push('[{"jsonrpc":"2.0","method":"foo","id":1},{"jsonrpc":"2.0","method":"add","params":[1,2],"id":2},{"jsonrpc":"2.0","method":"subtract","params":[1,2],"id":3}]');
+    });
+
+    it('should send multiple batch responses if receiving multiple batch requests', function(done) {
+      var callCount = 0;
+
+      jsonRpcServer.rpc.on('add', function(params, fn) {
+        fn(null, params[0] + params[1]);
+      });
+
+      jsonRpcServer.rpc.on('subtract', function(params, fn) {
+        fn(null, params[0] - params[1]);
+      });
+
+      jsonRpcServer.rpc.on('multiply', function(params, fn) {
+        fn(null, params[0] * params[1]);
+      });
+
+      jsonRpcServer.rpc.on('divide', function(params, fn) {
+        fn(null, params[0] / params[1]);
+      });
+
+      duplex._write = function(chunk, encoding, callback) {
+        callback();
+
+        callCount += 1;
+
+        if (callCount === 1) {
+          expect(JSON.parse(chunk)).to.eql([{
+            jsonrpc: '2.0',
+            error: {
+              code: -32601,
+              message: 'Method not found'
+            },
+            id: 1
+          }, {
+            jsonrpc: '2.0',
+            result: 3,
+            id: 2
+          }, {
+            jsonrpc: '2.0',
+            result: -1,
+            id: 3
+          }]);
+        }
+
+        if (callCount === 2) {
+          expect(JSON.parse(chunk)).to.eql([{
+            jsonrpc: '2.0',
+            error: {
+              code: -32601,
+              message: 'Method not found'
+            },
+            id: 4
+          }, {
+            jsonrpc: '2.0',
+            result: 2,
+            id: 5
+          }, {
+            jsonrpc: '2.0',
+            result: 0.5,
+            id: 6
+          }]);
+        }
+
+        if (callCount === 2) {
+          done();
+        }
+      };
+
+      duplex.push('[' +
+        '{"jsonrpc":"2.0","method":"foo","id":1},' +
+        '{"jsonrpc":"2.0","method":"add","params":[1,2],"id":2},' +
+        '{"jsonrpc":"2.0","method":"subtract","params":[1,2],"id":3}' +
+        ']');
+
+      duplex.push('[' +
+        '{"jsonrpc":"2.0","method":"foo","id":4},' +
+        '{"jsonrpc":"2.0","method":"multiply","params":[1,2],"id":5},' +
+        '{"jsonrpc":"2.0","method":"divide","params":[1,2],"id":6}' +
+        ']');
+    });
+
+    it('should send multiple batch responses if receiving multiple batch requests separated by new line character', function(done) {
+      var callCount = 0;
+
+      jsonRpcServer.rpc.on('add', function(params, fn) {
+        fn(null, params[0] + params[1]);
+      });
+
+      jsonRpcServer.rpc.on('subtract', function(params, fn) {
+        fn(null, params[0] - params[1]);
+      });
+
+      jsonRpcServer.rpc.on('multiply', function(params, fn) {
+        fn(null, params[0] * params[1]);
+      });
+
+      jsonRpcServer.rpc.on('divide', function(params, fn) {
+        fn(null, params[0] / params[1]);
+      });
+
+      duplex._write = function(chunk, encoding, callback) {
+        callback();
+
+        callCount += 1;
+
+        if (callCount === 1) {
+          expect(JSON.parse(chunk)).to.eql([{
+            jsonrpc: '2.0',
+            error: {
+              code: -32601,
+              message: 'Method not found'
+            },
+            id: 1
+          }, {
+            jsonrpc: '2.0',
+            result: 3,
+            id: 2
+          }, {
+            jsonrpc: '2.0',
+            result: -1,
+            id: 3
+          }]);
+        }
+
+        if (callCount === 2) {
+          expect(JSON.parse(chunk)).to.eql([{
+            jsonrpc: '2.0',
+            error: {
+              code: -32601,
+              message: 'Method not found'
+            },
+            id: 4
+          }, {
+            jsonrpc: '2.0',
+            result: 2,
+            id: 5
+          }, {
+            jsonrpc: '2.0',
+            result: 0.5,
+            id: 6
+          }]);
+        }
+
+        if (callCount === 2) {
+          done();
+        }
+      };
+
+      duplex.push('[' +
+        '{"jsonrpc":"2.0","method":"foo","id":1},' +
+        '{"jsonrpc":"2.0","method":"add","params":[1,2],"id":2},' +
+        '{"jsonrpc":"2.0","method":"subtract","params":[1,2],"id":3}' +
+        ']\n[' +
+        '{"jsonrpc":"2.0","method":"foo","id":4},' +
+        '{"jsonrpc":"2.0","method":"multiply","params":[1,2],"id":5},' +
+        '{"jsonrpc":"2.0","method":"divide","params":[1,2],"id":6}' +
+        ']');
+    });
+
+    it('should send batch response with new line character as delimiter', function(done) {
+      jsonRpcServer.rpc.on('add', function(params, fn) {
+        fn(null, params[0] + params[1]);
+      });
+
+      jsonRpcServer.rpc.on('subtract', function(params, fn) {
+        fn(null, params[0] - params[1]);
+      });
+
+      duplex._write = function(chunk, encoding, callback) {
+        expect(chunk.toString()).to.be('[{"error":{"message":"Method not found","code":-32601},"jsonrpc":"2.0","id":1},{"result":3,"jsonrpc":"2.0","id":2},{"result":-1,"jsonrpc":"2.0","id":3}]\n')
         done();
       };
 
